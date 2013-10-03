@@ -29,10 +29,11 @@ public class Weapon implements Runnable{
     private int width = 10;
     private int height = 7;
     public double angle;
-    private Spaceman sp;
+    public Character character;
     boolean is_alive = true;
-    public Weapon(int x, int y, Spaceman a) throws IOException {
-        this.sp = a;
+    public Weapon(int x, int y, String url, Character ch) throws IOException {
+        this.url = url;
+        this.character = ch;
         this.img = new BufferedImage(570, 380, BufferedImage.TRANSLUCENT);
         img_buffered = ImageIO.read(new File(this.url));
         this.y = y;
@@ -86,11 +87,5 @@ public class Weapon implements Runnable{
         g2.drawImage(img_buffered, trans,null);
         
         img.setData(img_copy.getRaster());
-        /*
-        Graphics g_final = img.createGraphics();
-        Graphics2D g2_final = (Graphics2D) g_final;
-        g2_final.setBackground(new Color(250,250,250,0));
-        g_final.drawImage(img_copy,0,0,null);        
-        */
     }
 }

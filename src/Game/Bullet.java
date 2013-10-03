@@ -24,7 +24,9 @@ public class Bullet implements Collisionable,Runnable{
     private Spaceman sp;
     boolean is_alive = true;
     private int gravity = 3;
-    public Bullet(int x, int y, int y_speed, int x_speed) {
+    public Weapon weapon;
+    public Bullet(int x, int y, int y_speed, int x_speed, Weapon w) {
+        this.weapon = w;
         this.img = new ImageIcon(getClass().getClassLoader().getResource(this.url)).getImage();
         this.y = y;
         this.x = x;
@@ -71,5 +73,12 @@ public class Bullet implements Collisionable,Runnable{
 
     public void setY(int y) {
         this.y = y;
+    }
+    public void hit(){
+        //Sounds, animations etc.
+        this.is_alive = false;
+        this.weapon.character.removeBullet(this);
+        
+        
     }
 }

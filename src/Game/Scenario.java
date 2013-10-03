@@ -84,12 +84,52 @@ public class Scenario extends Canvas implements Runnable{
         }
         for(Bullet b : this.playerOne.bullets){
             bufferGraphics.drawImage(b.img,b.get_x(),b.get_y(),this);
+            checkCollisions(b);
         }
         bufferGraphics.drawImage(this.playerOne.weapon.img,this.playerOne.weapon.get_x(),this.playerOne.weapon.get_y(),this);
         bufferGraphics.drawImage(this.playerTwo.weapon.img,this.playerTwo.weapon.get_x(),this.playerTwo.weapon.get_y(),this);
         g.drawImage(this.bufferImg,0,0,this);
     }
-
+    public void checkCollisions(Bullet b){
+        for(Platform p : this.platforms){
+            if(collision(b,p)){
+                b.hit();
+            }
+        }
+         if(b.getClass().getName() == "Spaceman"){
+             if(collision(b,playerTwo)){
+                 int current_life_playerTwo = playerTwo.hurt(10,b);
+                 b.hit();
+                 
+             }
+         }
+         else{
+             
+         }
+     }
+    public boolean collision(Collisionable b, Collisionable a){
+	boolean hit = false;
+	//Colsiones horizontales
+	if(b.get_x() + b.get_width() >= a.get_x() && b.get_x() < a.get_x() + a.get_width())
+	{
+		//Colisiones verticales
+		if(b.get_y() + b.get_height() >= a.get_y() && b.get_y() < a.get_y() + a.get_height())
+			hit = true;
+	}
+	//Colisión de a con b
+	if(b.get_x() <= a.get_x() && b.get_x() + b.get_width() >= a.get_x() + a.get_width())
+	{
+		if(b.get_y() <= a.get_y() && b.get_y() + b.get_height() >= a.get_y() + a.get_height())
+			hit = true;
+	}
+	//Colisión b con a
+	if(a.get_x() <= b.get_x() && a.get_x() + a.get_width() >= b.get_x() + b.get_width())
+	{
+		if(a.get_y() <= b.get_y() && a.get_y() + a.get_height() >= b.get_y() + b.get_height())
+			hit = true;
+	}
+	return hit;
+    }
     @Override
     public void run() {
         
@@ -199,4 +239,5 @@ public class Scenario extends Canvas implements Runnable{
              this.platforms.add(new Platform((this.width/2)-30,this.height- (342),60,300));
          }
      }
+    
 }
