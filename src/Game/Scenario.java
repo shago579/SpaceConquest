@@ -12,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -26,25 +27,38 @@ public class Scenario extends Canvas implements Runnable{
     private Image background;
     private Graphics bufferGraphics; 
     private BufferedImage bufferImg;
-    private final int width = this.getWidth();
-    private final int height = this.getHeight();
+    private final int width;
+    private final int height;
     private boolean isPlaying = true;
     private boolean firstTime = true;
     private Spaceman playerOne;
+    private Alien playerTwo;
     private Aimer aim1;
     private XboxController xbox1;
-     
-    public Scenario() throws IOException{
+    private ArrayList<Platform> platforms;
+    /**
+     *
+     * @param level
+     * @param width
+     * @param height
+     * @throws IOException
+     */
+    public Scenario(int level,int width,int height) throws IOException{
+        this.width = width;
+        this.height = height;
         this.bufferImg = new BufferedImage(570, 380, BufferedImage.TYPE_INT_RGB);
         this.background = new ImageIcon(getClass().getClassLoader().getResource("img/fondo.png")).getImage();
         this.bufferGraphics = this.bufferImg.createGraphics();
         aim1 = new Aimer(200,200,1);
-        playerOne = new Spaceman(30,640,this.getWidth()/2);
+        playerOne = new Spaceman(30,640,width,height);
+        playerTwo = new Alien(width-100,640,width,height);
         xbox1 = new XboxController();
         initControls();
         Thread t1 = new Thread(xbox1);
         t1.start();
         playerOne.weapon.update_angle(aim1.getX() - playerOne.get_x() , aim1.getY() - (playerOne.get_y() + 60));
+        setLevel(level);
+        
     }
     
     @Override
@@ -63,9 +77,16 @@ public class Scenario extends Canvas implements Runnable{
         }
         bufferGraphics.drawImage(this.background, -1, 0,this.getWidth()+1,this.getHeight(), this);
         bufferGraphics.drawImage(aim1.bffimg, aim1.getX(), aim1.getY(), null);
-        bufferGraphics.drawImage(this.playerOne.img,this.playerOne.get_x(),this.playerOne.get_y(),this);
-        
+        bufferGraphics.drawImage(this.playerOne.img,this.playerOne.get_x(),this.playerOne.get_y(),this.playerOne.get_width(),this.playerOne.get_height(),this);
+        bufferGraphics.drawImage(this.playerTwo.img,this.playerTwo.get_x(),this.playerTwo.get_y(),this.playerTwo.get_width(),this.playerTwo.get_height(),this);
+        for(Platform p : platforms){
+            bufferGraphics.drawImage(p.img,p.get_x(),p.get_y(),p.get_width(),p.get_height(),this);
+        }
+        for(Bullet b : this.playerOne.bullets){
+            bufferGraphics.drawImage(b.img,b.get_x(),b.get_y(),this);
+        }
         bufferGraphics.drawImage(this.playerOne.weapon.img,this.playerOne.weapon.get_x(),this.playerOne.weapon.get_y(),this);
+        bufferGraphics.drawImage(this.playerTwo.weapon.img,this.playerTwo.weapon.get_x(),this.playerTwo.weapon.get_y(),this);
         g.drawImage(this.bufferImg,0,0,this);
     }
 
@@ -77,8 +98,7 @@ public class Scenario extends Canvas implements Runnable{
             try{
                 repaint();
                 Thread.sleep(1000 / 60);
-                
-                
+
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -131,19 +151,13 @@ public class Scenario extends Canvas implements Runnable{
         xbox1.addButtonListener(new ButtonListener() {
             @Override
             public void aButtonPressed() {
-                //System.out.println("Click");
-                /*
-                if(aimOver(aim1, startbtn)){
-    
-                    
-                }
-                if(aimOver(aim1, exitbtn))
-                    System.exit(0);
-                    //myFrame.dispose();
-                    * */
+               int x = aim1.getX() - playerOne.get_x();
+               int y = aim1.getY() - (playerOne.get_y() + 140);
+               playerOne.shoot(y/10,x/10);
             }
 
             public void bButtonPressed() {
+                
             }
 
             public void xButtonPressed() {
@@ -171,4 +185,18 @@ public class Scenario extends Canvas implements Runnable{
             }
         });
     }
+     private void setLevel(int level){
+         this.platforms = new ArrayList<Platform>();
+         if(level == 1){
+             this.platforms.add(new Platform((this.width/2)-30,this.height- (342),60,300));
+         }
+         if(level == 2){
+             this.platforms.add(new Platform((this.width/2)-30,this.height- (342),60,300));
+             this.platforms.add(new Platform((this.width/2)+250,this.height- (442),60,400));
+             this.platforms.add(new Platform((this.width/2)-250,this.height- (442),60,400));
+         }
+         if(level == 1){
+             this.platforms.add(new Platform((this.width/2)-30,this.height- (342),60,300));
+         }
+     }
 }

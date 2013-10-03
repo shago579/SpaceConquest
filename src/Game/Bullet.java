@@ -13,28 +13,35 @@ import javax.swing.ImageIcon;
  */
 public class Bullet implements Collisionable,Runnable{
     private int x;
-    private Image img;
-    private String url = "img/bullet.png";
+    public Image img;
+    private String url = "img/nota.png";
     private int limite = 0;
     private int y;
     private int width = 10;
     private int height = 20;
-    private int velocidad = 5;
+    private int x_speed;
+    private int y_speed;
     private Spaceman sp;
     boolean is_alive = true;
-    public Bullet(int x, int y, Spaceman a){
-        this.sp = a;
+    private int gravity = 3;
+    public Bullet(int x, int y, int y_speed, int x_speed) {
         this.img = new ImageIcon(getClass().getClassLoader().getResource(this.url)).getImage();
         this.y = y;
         this.x = x;
+        this.x_speed = x_speed;
+        this.y_speed = -y_speed;
+        
     }
     @Override
     public void run() {
         while(is_alive){
-            if(this.y<0) is_alive = false;
+            
             try{
                 Thread.sleep(1000 / 60);
-                this.y-= this.velocidad;               
+                this.y_speed -=  this.gravity;
+                this.y-= this.y_speed;
+                this.x += x_speed;
+                if(this.x > 2000 || this.y > 1000) this.is_alive = false;
             }
             catch (Exception e){
                 System.out.println(e);

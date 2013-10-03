@@ -2,6 +2,7 @@ package spaceconquest;
 
 import javax.swing.JFrame;
 import Game.Scenario;
+import java.io.IOException;
 
 public class MainFrame extends JFrame {
 
@@ -25,9 +26,9 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
-    public void startGame() {
+    public void startGame() throws IOException {
         this.menu.xbox1.finish();
-        scene1 = new Scenario();
+        scene1 = new Scenario(2,this.getWidth(),this.getHeight());
         scene1.setBounds(0,0, this.getWidth(),this.getHeight());
         Thread tgame = new Thread(scene1);
         add(scene1);

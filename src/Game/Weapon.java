@@ -31,11 +31,10 @@ public class Weapon implements Runnable{
     public double angle;
     private Spaceman sp;
     boolean is_alive = true;
-    public Weapon(int x, int y, Spaceman a) throws IOException{
+    public Weapon(int x, int y, Spaceman a) throws IOException {
         this.sp = a;
         this.img = new BufferedImage(570, 380, BufferedImage.TRANSLUCENT);
         img_buffered = ImageIO.read(new File(this.url));
-        
         this.y = y;
         this.x = x;
         
@@ -43,7 +42,6 @@ public class Weapon implements Runnable{
     @Override
     public void run() {
         while(is_alive){
-            if(this.y<0) is_alive = false;
             try{
                 Thread.sleep(1000 / 60);             
             }
