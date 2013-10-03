@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
  *
  * @author Luis Santiago
  */
-public class Scenario extends Canvas implements Runnable{
+public class Scenario_test extends Canvas implements Runnable{
     
     private Image background;
     private Graphics bufferGraphics; 
@@ -20,7 +20,7 @@ public class Scenario extends Canvas implements Runnable{
     private boolean isPlaying = true;
     private Aimer aim1;
     
-    public Scenario(){
+    public Scenario_test(){
         aim1 = new Aimer(200,200,1);
         setBackground(new Color(255,255,255));
     }

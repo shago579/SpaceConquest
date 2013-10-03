@@ -1,7 +1,7 @@
 package spaceconquest;
 
 import javax.swing.JFrame;
-//import Game.Scenario;
+import Game.Scenario;
 
 public class MainFrame extends JFrame {
 
@@ -26,14 +26,14 @@ public class MainFrame extends JFrame {
     }
 
     public void startGame() {
+        this.menu.xbox1.finish();
         scene1 = new Scenario();
+        scene1.setBounds(0,0, this.getWidth(),this.getHeight());
         Thread tgame = new Thread(scene1);
         add(scene1);
         menu.isOver = false;
-        remove(menu);
-        
-        
+        remove(menu);        
         tgame.start();
-        //repaint();
+        repaint();
     }
 }

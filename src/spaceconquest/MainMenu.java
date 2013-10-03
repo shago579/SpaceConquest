@@ -14,13 +14,13 @@ import java.awt.Canvas;
 import java.awt.image.ImageObserver;
 import javax.swing.JOptionPane;
 
-public class MainMenu extends Canvas implements Runnable{
+public class MainMenu extends Canvas {
 
     private MenuButton startbtn;
     private MenuButton exitbtn;
     private JLabel title;
     private MainFrame myFrame;
-    private XboxController xbox1;
+    public XboxController xbox1;
     private boolean firstTime = true;
     private Graphics bufferGraphics;
     private BufferedImage bufferImg;
@@ -72,7 +72,7 @@ public class MainMenu extends Canvas implements Runnable{
             this.bufferGraphics = this.bufferImg.createGraphics();
             firstTime = false;
         }
-        g.drawImage(this.bufferImg, 0, 0, this);
+        bufferGraphics.fillRect( 0, 0, 1700,1000);
         if(aimOver(aim1, startbtn))
             startbtn.aimOver();
         else
@@ -82,10 +82,11 @@ public class MainMenu extends Canvas implements Runnable{
         else
             exitbtn.nothingOver();
         
-        g.drawImage(startbtn.getBffImage(), startbtn.getX(), startbtn.getY(), title);
-        g.drawImage(exitbtn.getBffImage(), exitbtn.getX(), exitbtn.getY(), title);
-        g.drawImage(aim1.bffimg, aim1.getX(), aim1.getY(), null); // see javadoc for more info on the parameters 
-        g.drawImage(this.aim1.bffimg, this.aim1.x, this.aim1.y, this);
+        bufferGraphics.drawImage(startbtn.getBffImage(), startbtn.getX(), startbtn.getY(), title);
+        bufferGraphics.drawImage(exitbtn.getBffImage(), exitbtn.getX(), exitbtn.getY(), title);
+        bufferGraphics.drawImage(aim1.bffimg, aim1.getX(), aim1.getY(), null); // see javadoc for more info on the parameters 
+        bufferGraphics.drawImage(this.aim1.bffimg, this.aim1.x, this.aim1.y, this);
+        g.drawImage(this.bufferImg,0,0,this);
         
     }
 
@@ -187,27 +188,4 @@ public class MainMenu extends Canvas implements Runnable{
 	return hit;
     }
 
-    @Override
-    public void run() {
-        while (isOver){
-        
-            try{
-                Thread.sleep(1000 / 60);
-                repaint();
-            }
-            catch (Exception e){
-                System.out.println(e);
-            }
-        }
-        
-        
-        try{
-                Thread.sleep(100);
-            }
-            catch (Exception e){
-                System.out.println(e);
-            }
-        
-        System.out.println("Menu Over");
-    }
 }
