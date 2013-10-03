@@ -1,16 +1,18 @@
 package spaceconquest;
 
 import javax.swing.JFrame;
+//import Game.Scenario;
 
 public class MainFrame extends JFrame {
 
     private MainMenu menu;
     private Scenario scene1;
+    //private Scenario level1;
 
     public MainFrame() {
 
         menu = new MainMenu(this);
-        scene1 = new Scenario();
+        //scene1 = new Scenario();
 
         setResizable(false);
         setUndecorated(true);
@@ -19,13 +21,19 @@ public class MainFrame extends JFrame {
         //add();
         add(menu);
 
-
+        
         setVisible(true);
     }
 
     public void startGame() {
-        remove(menu);
+        scene1 = new Scenario();
+        Thread tgame = new Thread(scene1);
         add(scene1);
-        repaint();
+        menu.isOver = false;
+        remove(menu);
+        
+        
+        tgame.start();
+        //repaint();
     }
 }

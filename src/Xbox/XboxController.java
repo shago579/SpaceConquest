@@ -16,27 +16,38 @@ public class XboxController implements Runnable{
     private ButtonListener buttons;
     private LeftAxisListener leftAxis;
     
-    static Controller controller;
+    private Controller controller;
     private boolean start;
     
     public XboxController(){
         
         this.start = true;
+        
+        
+        for(int i=0; i< Controllers.getControllerCount();i++){
+            controller = Controllers.getController(i);
+            System.out.println("Controller found: " + controller.getName() + "  "+i);
+        }
+        
+        
+        controller = Controllers.getController(0);
+        
+        controller.setDeadZone(0, (float) 0.3);
+        controller.setDeadZone(1, (float) 0.3);
+        controller.setDeadZone(4, (float) 0.4);
+    }
+    
+    public static boolean checkController(){
         try {
             Controllers.create();
         } catch (LWJGLException ex) {
             Logger.getLogger(XboxController.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        for(int i=0; i< Controllers.getControllerCount();i++){
-            controller = Controllers.getController(i);
-            System.out.println(controller.getName() + "  "+i);
-        }
-        
-        controller = Controllers.getController(0);
-        controller.setDeadZone(0, (float) 0.3);
-        controller.setDeadZone(1, (float) 0.3);
-        controller.setDeadZone(4, (float) 0.4);
+        if(Controllers.getControllerCount() ==0 )
+            return false;
+        else 
+            return true;
     }
     
     public void addRightAxisListener(RightAxisListener rightAxis){

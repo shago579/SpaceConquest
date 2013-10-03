@@ -11,6 +11,8 @@ import javax.swing.JLabel;
 
 import Xbox.*;
 import java.awt.Canvas;
+import java.awt.image.ImageObserver;
+import javax.swing.JOptionPane;
 
 public class MainMenu extends Canvas implements Runnable{
 
@@ -23,9 +25,9 @@ public class MainMenu extends Canvas implements Runnable{
     private Graphics bufferGraphics;
     private BufferedImage bufferImg;
     private Aimer aim1;
-    
-    private boolean isOver;
 
+    public boolean isOver = true;
+    
     public MainMenu(MainFrame myFrame) {
 
         this.bufferImg = new BufferedImage(570, 380, BufferedImage.TYPE_INT_RGB);
@@ -33,7 +35,12 @@ public class MainMenu extends Canvas implements Runnable{
 
         this.myFrame = myFrame;
         this.aim1 = new Aimer(100, 150, 1);
-
+        
+        if(!XboxController.checkController()){
+            JOptionPane.showConfirmDialog(this, "Error finding the controller", "Error", JOptionPane.PLAIN_MESSAGE, JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+            //myFrame.dispose();
+        }
         xbox1 = new XboxController();
         initControls();
         Thread t1 = new Thread(xbox1);
@@ -50,11 +57,6 @@ public class MainMenu extends Canvas implements Runnable{
         title.setBackground(new Color(0, 0, 0));
 
         setBackground(new Color(0, 0, 0));
-
-        ExecutorService executor = Executors.newFixedThreadPool(15);
-        for (int count = 1; count < 150; count++) {
-            //executor.submit(new Processor(i));
-        }
     }
 
     public void paint(Graphics g) {
@@ -87,7 +89,7 @@ public class MainMenu extends Canvas implements Runnable{
         
     }
 
-    public void initControls() {
+    private void initControls() {
 
         xbox1.addRightAxisListener(new RightAxisListener() {
             public void rightAxisMoveVertical(float movement) {
@@ -122,10 +124,14 @@ public class MainMenu extends Canvas implements Runnable{
             public void aButtonPressed() {
                 //System.out.println("Click");
                 if(aimOver(aim1, startbtn)){
+                    /////////////////////Crea el juego y cierra el menu
+                    
+                    myFrame.startGame();
                     
                 }
                 if(aimOver(aim1, exitbtn))
-                    myFrame.dispose();
+                    System.exit(0);
+                    //myFrame.dispose();
             }
 
             public void bButtonPressed() {
@@ -192,7 +198,16 @@ public class MainMenu extends Canvas implements Runnable{
             catch (Exception e){
                 System.out.println(e);
             }
-        
         }
+        
+        
+        try{
+                Thread.sleep(100);
+            }
+            catch (Exception e){
+                System.out.println(e);
+            }
+        
+        System.out.println("Menu Over");
     }
 }
