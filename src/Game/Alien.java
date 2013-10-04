@@ -19,6 +19,7 @@ public class Alien extends Character{
     public Image winner_image;
     public Alien(int x, int y,int limite_x,int limite_y) throws IOException{
         this.x = x;
+        this.limite_y = y;
         this.y = y;
         this.img = new ImageIcon(getClass().getClassLoader().getResource("img/Player2Body.png")).getImage();
         this.winner_image = new ImageIcon(getClass().getClassLoader().getResource("img/player1win.png")).getImage();
@@ -34,6 +35,20 @@ public class Alien extends Character{
     public int get_height() {
         return 100;
     }
-    
+    public Image get_image_life(){
+        if(this.life == 100)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life7.png")).getImage();
+        if(this.life == 80)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life8.png")).getImage();
+        if(this.life == 60)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life9.png")).getImage();
+        if(this.life == 40)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life10.png")).getImage();
+        if(this.life == 20)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life11.png")).getImage();
+        if(this.life == 0)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life12.png")).getImage();
+        return this.img_life;
+    }
 }
 

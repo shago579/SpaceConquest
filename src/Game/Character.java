@@ -23,6 +23,7 @@ public class Character implements Collisionable,Runnable{
     public Weapon weapon;
     public int gravity = 2;
     protected int life = 100;
+    private boolean first_time = true;
     protected Image img = null;
     protected Image img_life = null;
     public int y_speed = 0;
@@ -106,9 +107,11 @@ public class Character implements Collisionable,Runnable{
         while(life > 0){
             try{
                 Thread.sleep(1000 / 60);
-                
                 this.y_speed -=  this.gravity;
-                
+                if(this.getClass().getName().equals("Game.Alien")){
+                    this.weapon.setX(get_x() - 70);
+                    this.weapon.setY(this.get_y() - 60);
+                }
                 this.y-= this.y_speed;
                 this.weapon.setY(this.weapon.get_y() - this.y_speed);
                 if(this.y > this.limite_y){

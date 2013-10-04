@@ -81,7 +81,12 @@ public class Weapon implements Runnable{
         
         this.angle = Math.toDegrees(Math.atan(height/width));
         AffineTransform trans = new AffineTransform();
-        trans.rotate( Math.toRadians(angle),this.get_width(),this.get_height()+100);
+        if(this.character.getClass().getName().equals("Game.Alien")){
+            trans.rotate( Math.toRadians(angle),this.get_width()+100,this.get_height()+100);
+        }
+        else{
+            trans.rotate( Math.toRadians(angle),this.get_width(),this.get_height()+100);
+        }
         
         img_copy = new BufferedImage(570, 380, BufferedImage.TRANSLUCENT);
         Graphics g = img_copy.createGraphics();

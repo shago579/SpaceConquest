@@ -19,7 +19,7 @@ public class XboxController implements Runnable{
     public Controller controller;
     private boolean start;
     
-    public XboxController(){
+    public XboxController(int j){
         
         this.start = true;
         
@@ -30,7 +30,7 @@ public class XboxController implements Runnable{
         }
         
         
-        controller = Controllers.getController(0);
+        controller = Controllers.getController(j);
         
         controller.setDeadZone(0, (float) 0.3);
         controller.setDeadZone(1, (float) 0.3);

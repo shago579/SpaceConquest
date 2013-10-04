@@ -34,12 +34,16 @@ public class Scenario extends Canvas implements Runnable{
     private Spaceman playerOne;
     private Alien playerTwo;
     private Aimer aim1;
+    private Aimer aim2;
     public int winner = 0;
     private XboxController xbox1;
+    private XboxController xbox2;
     private ArrayList<Platform> platforms;
     private Audio audio;
     private boolean a_is_pressed = false;
     private boolean b_is_pressed = false;
+    private boolean a2_is_pressed = false;
+    private boolean b2_is_pressed = false;
     /**
      *
      * @param level
@@ -55,13 +59,19 @@ public class Scenario extends Canvas implements Runnable{
         this.background = new ImageIcon(getClass().getClassLoader().getResource("img/fondo.png")).getImage();
         this.bufferGraphics = this.bufferImg.createGraphics();
         aim1 = new Aimer(200,200,1);
+        aim2 = new Aimer(400,200,1);
         playerOne = new Spaceman(30,660,width,height);
         Thread t1 = new Thread(playerOne);
         t1.start();
         playerTwo = new Alien(width-100,645,width,height);
-        xbox1 = new XboxController();
+        Thread t2 = new Thread(playerTwo);
+        t2.start();
+        xbox1 = new XboxController(0);
+        xbox2 = new XboxController(1);
         initControls();
         t1 = new Thread(xbox1);
+        t1.start();
+        t1 = new Thread(xbox2);
         t1.start();
         playerOne.weapon.update_angle(aim1.getX() - playerOne.get_x() , aim1.getY() - (playerOne.get_y() + 60));
         setLevel(level);
@@ -95,7 +105,8 @@ public class Scenario extends Canvas implements Runnable{
             return;
         }
         
-        bufferGraphics.drawImage(aim1.bffimg, aim1.getX(), aim1.getY(), null);
+        //bufferGraphics.drawImage(aim1.bffimg, aim1.getX(), aim1.getY(), null);
+        //bufferGraphics.drawImage(aim2.bffimg, aim2.getX(), aim2.getY(), null);
         bufferGraphics.drawImage(this.playerOne.img,this.playerOne.get_x(),this.playerOne.get_y(),this.playerOne.get_width(),this.playerOne.get_height(),this);
         bufferGraphics.drawImage(this.playerOne.get_image_life(),30,20,this);
         bufferGraphics.drawImage(this.playerTwo.get_image_life(),1000,20,this);
@@ -105,7 +116,16 @@ public class Scenario extends Canvas implements Runnable{
             checkPlatformCollision(p);
         }
         for(Bullet b : this.playerOne.bullets){
-           
+            if(b.isInterrupted()){
+                continue;
+            }
+            bufferGraphics.drawImage(b.img,b.get_x(),b.get_y(),this);
+            checkCollisions(b);
+        }
+         for(Bullet b : this.playerTwo.bullets){
+            if(b.isInterrupted()){
+                continue;
+            }
             bufferGraphics.drawImage(b.img,b.get_x(),b.get_y(),this);
             checkCollisions(b);
         }
@@ -164,14 +184,27 @@ public class Scenario extends Canvas implements Runnable{
                 playerOne.set_y(p.get_y() - playerOne.get_height() +5);
                 playerOne.y_speed *= 0;
             }
-            else if(playerOne.get_x()>(p.get_x()-playerOne.get_width()) && playerOne.get_y() > p.get_y()){
+            else if(playerOne.get_x()- 10 < (p.get_x())){
                 playerOne.set_x(p.get_x() - 10 - playerOne.get_width());
             }
-            else if(playerOne.get_x()<(p.get_x()-playerOne.get_width()) && playerOne.get_y() > p.get_y() ){
-                playerOne.set_x(p.get_x() + 5 + p.get_width());
-            }
-            
+            else if((playerOne.get_x() + 10)>(p.get_x()) ){
                 
+                playerOne.set_x(playerOne.get_x() + 20); 
+            }              
+        }
+        if(collision(p,playerTwo)){
+            
+            if(playerTwo.get_y() < ( p.get_y())){
+                playerTwo.set_y(p.get_y() - playerTwo.get_height() +5);
+                playerTwo.y_speed *= 0;
+            }
+            else if(playerTwo.get_x()- 10 < (p.get_x())){
+                playerTwo.set_x(p.get_x() - 10 - playerTwo.get_width());
+            }
+            else if((playerTwo.get_x() + 10)>(p.get_x()) ){
+                
+                playerTwo.set_x(playerTwo.get_x() + 20); 
+            }
         }
     }
     public boolean collision(Collisionable b, Collisionable a){
@@ -210,6 +243,12 @@ public class Scenario extends Canvas implements Runnable{
                 if(!xbox1.controller.isButtonPressed(1)){
                     b_is_pressed = false;
                 }
+                if(!xbox2.controller.isButtonPressed(0)){
+                    a2_is_pressed = false;
+                }
+                if(!xbox2.controller.isButtonPressed(1)){
+                    b2_is_pressed = false;
+                }
                 Thread.sleep(1000 / 60);
 
             }catch(Exception e){
@@ -218,7 +257,9 @@ public class Scenario extends Canvas implements Runnable{
         }
     }
      private void initControls() {
-
+         /*
+          * Set ups the listeners for the control of the Spaceman
+          */
         xbox1.addRightAxisListener(new RightAxisListener() {
             public void rightAxisMoveVertical(float movement) {
                 if (movement > 0) {
@@ -267,7 +308,7 @@ public class Scenario extends Canvas implements Runnable{
                if(!a_is_pressed){
                    int x = aim1.getX() - playerOne.get_x();
                     int y = aim1.getY() - (playerOne.get_y());
-                    playerOne.shoot(y/20,x/20);
+                    playerOne.shoot(y/20,10);
                     audio.play();
                }
                a_is_pressed = true;
@@ -290,6 +331,98 @@ public class Scenario extends Canvas implements Runnable{
 
             public void lbButtonPressed() {
             }
+
+            public void rbButtonPressed() {
+            }
+
+            public void backButtonPressed() {
+            }
+
+            public void startButtonPressed() {
+            }
+
+            public void leftStickButtonPressed() {
+            }
+
+            public void rightStickButtonPressed() {
+            }
+        });
+        /*
+          * Set ups the listeners for the control of the Alien
+          */
+        xbox2.addRightAxisListener(new RightAxisListener() {
+            public void rightAxisMoveVertical(float movement) {
+                if (movement > 0) {
+                    aim2.setY(aim2.getY() + 20);
+                } else if(movement < 0){
+                    aim2.setY(aim2.getY() - 20);
+                }
+                try {
+                    playerTwo.weapon.update_angle(aim2.getX() - playerTwo.get_x() , aim2.getY() - (playerTwo.get_y() + 60));
+                } catch (IOException ex) {
+                    Logger.getLogger(Scenario.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            public void rightAxisMoveHorizontal(float movement) {
+                if (movement > 0) {
+                    aim2.setX(aim2.getX() + 20 );
+                } else if(movement < 0){
+                    aim2.setX(aim2.getX() - 20);
+                }
+                try {
+                    playerTwo.weapon.update_angle(aim2.getX() - playerTwo.get_x() , aim2.getY() - (playerTwo.get_y() + 60));
+                } catch (IOException ex) {
+                    Logger.getLogger(Scenario.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        xbox2.addLeftAxisListener(new LeftAxisListener() {
+            public void leftAxisMoveVertical(float movement) {
+                
+            }
+
+            public void leftAxisMoveHorizontal(float movement) {
+                if (movement > 0) {
+                    playerTwo.move_right();
+                } else if(movement < 0){
+                    playerTwo.move_left();
+                }
+            }
+        });
+
+        xbox2.addButtonListener(new ButtonListener() {
+            @Override
+            public void aButtonPressed() {
+               if(!a2_is_pressed){
+                   int x = aim2.getX() - playerTwo.get_x();
+                   
+                    int y = aim2.getY() - (playerTwo.get_y());
+                    if(x<aim2.getX()) y = -y; 
+                    playerTwo.shoot(y/20,-10);
+                    audio.play();
+               }
+               a2_is_pressed = true;
+               
+            }
+
+            public void bButtonPressed() {
+                if(!b2_is_pressed){
+                   playerTwo.jump();
+               }
+                b2_is_pressed = true;
+                
+            }
+
+            public void xButtonPressed() {
+            }
+
+            public void yButtonPressed() {
+            }
+
+            public void lbButtonPressed() {
+            }   
 
             public void rbButtonPressed() {
             }

@@ -44,7 +44,7 @@ public class MainMenu extends Canvas {
             System.exit(0);
             //myFrame.dispose();
         }
-        xbox1 = new XboxController();
+        xbox1 = new XboxController(1);
         initControls();
         Thread t1 = new Thread(xbox1);
         t1.start();
