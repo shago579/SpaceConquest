@@ -29,6 +29,7 @@ public class Weapon implements Runnable{
     private int width = 10;
     private int height = 7;
     public double angle;
+    public int y_limit;
     public Character character;
     boolean is_alive = true;
     public Weapon(int x, int y, String url, Character ch) throws IOException {
@@ -37,6 +38,7 @@ public class Weapon implements Runnable{
         this.img = new BufferedImage(570, 380, BufferedImage.TRANSLUCENT);
         img_buffered = ImageIO.read(new File(this.url));
         this.y = y;
+        this.y_limit = y;
         this.x = x;
         
     }
