@@ -12,6 +12,9 @@ import javax.swing.JLabel;
 import Xbox.*;
 import java.awt.Canvas;
 import java.awt.image.ImageObserver;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class MainMenu extends Canvas {
@@ -41,7 +44,7 @@ public class MainMenu extends Canvas {
             System.exit(0);
             //myFrame.dispose();
         }
-        xbox1 = new XboxController();
+        xbox1 = new XboxController(1);
         initControls();
         Thread t1 = new Thread(xbox1);
         t1.start();
@@ -125,9 +128,13 @@ public class MainMenu extends Canvas {
             public void aButtonPressed() {
                 //System.out.println("Click");
                 if(aimOver(aim1, startbtn)){
-                    /////////////////////Crea el juego y cierra el menu
-                    
-                    myFrame.startGame();
+                    try {
+                        /////////////////////Creates the game and closes the menu
+
+                        myFrame.startGame();
+                    } catch (IOException ex) {
+                        Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     
                 }
                 if(aimOver(aim1, exitbtn))
@@ -166,20 +173,20 @@ public class MainMenu extends Canvas {
     
     public boolean aimOver(Aimer b, MenuButton a){
 	boolean hit = false;
-	//Colsiones horizontales
+	
 	if(b.getX() + b.getWidth() >= a.getX() && b.getX() < a.getX() + a.getWidth())
 	{
-		//Colisiones verticales
+		
 		if(b.getY() + b.getHeight() >= a.getY() && b.getY() < a.getY() + a.getHeight())
 			hit = true;
 	}
-	//Colisión de a con b
+	
 	if(b.getX() <= a.getX() && b.getX() + b.getWidth() >= a.getX() + a.getWidth())
 	{
 		if(b.getY() <= a.getY() && b.getY() + b.getHeight() >= a.getY() + a.getHeight())
 			hit = true;
 	}
-	//Colisión b con a
+	
 	if(a.getX() <= b.getX() && a.getX() + a.getWidth() >= b.getX() + b.getWidth())
 	{
 		if(a.getY() <= b.getY() && a.getY() + a.getHeight() >= b.getY() + b.getHeight())

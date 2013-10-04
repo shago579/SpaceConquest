@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
  *
  * @author Uriel
  */
-public class Bullet implements Collisionable,Runnable{
+public class Bullet extends Thread implements Collisionable{
     private int x;
     public Image img;
     private String url = "img/nota.png";
@@ -23,7 +23,7 @@ public class Bullet implements Collisionable,Runnable{
     private int y_speed;
     private Spaceman sp;
     boolean is_alive = true;
-    private int gravity = 3;
+    private int gravity = 0;
     public Weapon weapon;
     public Bullet(int x, int y, int y_speed, int x_speed, Weapon w) {
         this.weapon = w;
@@ -31,6 +31,7 @@ public class Bullet implements Collisionable,Runnable{
         this.y = y;
         this.x = x;
         this.x_speed = x_speed;
+        
         this.y_speed = -y_speed;
         
     }

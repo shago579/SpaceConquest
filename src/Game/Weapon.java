@@ -20,6 +20,9 @@ import javax.swing.ImageIcon;
  * @author Uriel
  */
 public class Weapon implements Runnable{
+    /*
+     * Defines the necessary variables for the Weapon to work
+     */
     private int x;
     public BufferedImage img;
     public BufferedImage img_copy;
@@ -29,6 +32,7 @@ public class Weapon implements Runnable{
     private int width = 10;
     private int height = 7;
     public double angle;
+    public int y_limit;
     public Character character;
     boolean is_alive = true;
     public Weapon(int x, int y, String url, Character ch) throws IOException {
@@ -37,6 +41,7 @@ public class Weapon implements Runnable{
         this.img = new BufferedImage(570, 380, BufferedImage.TRANSLUCENT);
         img_buffered = ImageIO.read(new File(this.url));
         this.y = y;
+        this.y_limit = y;
         this.x = x;
         
     }
@@ -79,7 +84,12 @@ public class Weapon implements Runnable{
         
         this.angle = Math.toDegrees(Math.atan(height/width));
         AffineTransform trans = new AffineTransform();
-        trans.rotate( Math.toRadians(angle),this.get_width(),this.get_height()+100);
+        if(this.character.getClass().getName().equals("Game.Alien")){
+            trans.rotate( Math.toRadians(angle),this.get_width()+100,this.get_height()+100);
+        }
+        else{
+            trans.rotate( Math.toRadians(angle),this.get_width(),this.get_height()+100);
+        }
         
         img_copy = new BufferedImage(570, 380, BufferedImage.TRANSLUCENT);
         Graphics g = img_copy.createGraphics();
