@@ -52,7 +52,10 @@ public class Scenario extends Canvas implements Runnable{
      * @throws IOException
      */
     public Scenario(int level,int width,int height) throws IOException{
-        
+        /*
+         * Define the necessary variables, such as the player, the size of the window,
+         * the xbox controls, the graphics buffer and so on.
+         */
         this.width = width;
         this.height = height;
         this.bufferImg = new BufferedImage(570, 380, BufferedImage.TYPE_INT_RGB);
@@ -73,7 +76,10 @@ public class Scenario extends Canvas implements Runnable{
         t1.start();
         t1 = new Thread(xbox2);
         t1.start();
+        //We update the angle of the weapon of each character
         playerOne.weapon.update_angle(aim1.getX() - playerOne.get_x() , aim1.getY() - (playerOne.get_y() + 60));
+        playerTwo.weapon.update_angle(aim2.getX() - playerTwo.get_x() , aim2.getY() - (playerTwo.get_y() + 60));
+        //In this line we define the level of the game and build the corresponding platforms
         setLevel(level);
         audio = new Audio();
         
@@ -81,10 +87,14 @@ public class Scenario extends Canvas implements Runnable{
     
     @Override
     public void paint(Graphics g){
+        // Update the graphics of the Canvas.
         update(g);    
     }
     @Override
     public void update(Graphics g){
+        /*
+         * If it's the first time of the update, we build the graphics buffer.
+         */
          if (firstTime) {
             Dimension dim = getSize();
             int w = dim.width;
@@ -93,28 +103,39 @@ public class Scenario extends Canvas implements Runnable{
             this.bufferGraphics = this.bufferImg.createGraphics();
             firstTime = false;
         }
+         //Draw the background
         bufferGraphics.drawImage(this.background, -1, 0,1500,this.height, this);
+        /*
+         * If there is a winner, show it.
+         */
         if(winner == 1){
             bufferGraphics.drawImage(playerOne.winner_image, this.width/2 - 400, this.height/2 -300,this);
             g.drawImage(this.bufferImg,0,0,this);
             return;
         }
         if(winner == 2){
-            bufferGraphics.drawImage(playerTwo.winner_image, this.width/2, this.height/2,this);
+            bufferGraphics.drawImage(playerTwo.winner_image, this.width/2 -300, this.height/2 - 300,this);
             g.drawImage(this.bufferImg,0,0,this);
             return;
         }
         
-        //bufferGraphics.drawImage(aim1.bffimg, aim1.getX(), aim1.getY(), null);
-        //bufferGraphics.drawImage(aim2.bffimg, aim2.getX(), aim2.getY(), null);
+        /*
+         * Draw the characters of the game and the life.
+         */
         bufferGraphics.drawImage(this.playerOne.img,this.playerOne.get_x(),this.playerOne.get_y(),this.playerOne.get_width(),this.playerOne.get_height(),this);
         bufferGraphics.drawImage(this.playerOne.get_image_life(),30,20,this);
         bufferGraphics.drawImage(this.playerTwo.get_image_life(),1000,20,this);
         bufferGraphics.drawImage(this.playerTwo.img,this.playerTwo.get_x(),this.playerTwo.get_y(),this.playerTwo.get_width(),this.playerTwo.get_height(),this);
+        /*
+         * Draw each platforms and check for collisions with the players
+         */
         for(Platform p : platforms){
             bufferGraphics.drawImage(p.img,p.get_x(),p.get_y(),p.get_width(),p.get_height(),this);
             checkPlatformCollision(p);
         }
+        /*
+         * Draw each bullet and check for collisions with the players and the platforms of the player one
+         */
         for(Bullet b : this.playerOne.bullets){
             if(b.isInterrupted()){
                 continue;
@@ -122,6 +143,7 @@ public class Scenario extends Canvas implements Runnable{
             bufferGraphics.drawImage(b.img,b.get_x(),b.get_y(),this);
             checkCollisions(b);
         }
+        // Now we check with the bullets of the Alien
          for(Bullet b : this.playerTwo.bullets){
             if(b.isInterrupted()){
                 continue;
@@ -129,23 +151,33 @@ public class Scenario extends Canvas implements Runnable{
             bufferGraphics.drawImage(b.img,b.get_x(),b.get_y(),this);
             checkCollisions(b);
         }
+         /*
+         * Draw the weapons
+         */
         bufferGraphics.drawImage(this.playerOne.weapon.img,this.playerOne.weapon.get_x(),this.playerOne.weapon.get_y(),this);
         bufferGraphics.drawImage(this.playerTwo.weapon.img,this.playerTwo.weapon.get_x(),this.playerTwo.weapon.get_y(),this);
+        /*
+         * Draw the graphics of the buffer in the Canvas
+         */
         g.drawImage(this.bufferImg,0,0,this);
     }
     public void checkCollisions(Bullet b){
+        /*
+         * Check for collisions with the bullets
+         */
          if(b.isInterrupted()){
             b.hit();
         } 
         if(b.is_alive){
         for(Platform p : this.platforms){
+            //If the bullets collides with a platform, we destroy it
             if(collision(b,p)){
                 b.is_alive = false;
             }
         }
         
          if(b.weapon.character.getClass().getName().equals("Game.Spaceman") ){
-             
+             // If it collides with the other player, we extract 20 points from the life
              if(collision(b,playerTwo)){
                  int current_life_playerTwo = playerTwo.hurt(20,b);
                  if(current_life_playerTwo == 0){
@@ -156,6 +188,7 @@ public class Scenario extends Canvas implements Runnable{
              }
          }
          else if(b.weapon.character.getClass().getName().equals("Game.Alien") ){
+             // If it collides with the other player, we extract 20 points from the life
              if(collision(b,playerOne)){
                  int current_life_playerOne = playerOne.hurt(20,b);
                  if(current_life_playerOne == 0){
@@ -165,6 +198,7 @@ public class Scenario extends Canvas implements Runnable{
              }
          }
         }
+        // The next lines are just to avoid a Concurrent Modification error
         else if(!b.is_alive && !b.isInterrupted()){
             b.hit();
         }
@@ -174,21 +208,21 @@ public class Scenario extends Canvas implements Runnable{
     }
     public void checkPlatformCollision(Platform p){
         /*
-         * personaje.contador= 0;
-         * personaje.setY(plataforma.getY() - personaje.getHeight());
-         * personaje.vy *= -val_reb;	
+         * Check for collides between the platforms and the players	
          */
         if(collision(p,playerOne)){
             
             if(playerOne.get_y() < ( p.get_y())){
+                // Ih the collision is from above, the character stays over the platform
                 playerOne.set_y(p.get_y() - playerOne.get_height() +5);
                 playerOne.y_speed *= 0;
             }
             else if(playerOne.get_x()- 10 < (p.get_x())){
+                // Ih the collision is from the left, the character stays at the left of the platform
                 playerOne.set_x(p.get_x() - 10 - playerOne.get_width());
             }
             else if((playerOne.get_x() + 10)>(p.get_x()) ){
-                
+                // Ih the collision is from the right, the character stays at the right of the platform
                 playerOne.set_x(playerOne.get_x() + 20); 
             }              
         }
@@ -209,20 +243,20 @@ public class Scenario extends Canvas implements Runnable{
     }
     public boolean collision(Collisionable b, Collisionable a){
 	boolean hit = false;
-	//Colsiones horizontales
+	//Horizontal collides
 	if(b.get_x() + b.get_width() >= a.get_x() && b.get_x() < a.get_x() + a.get_width())
 	{
-		//Colisiones verticales
+		//Vertical collides
 		if(b.get_y() + b.get_height() >= a.get_y() && b.get_y() < a.get_y() + a.get_height())
 			hit = true;
 	}
-	//Colisión de a con b
+	//When a collides with b
 	if(b.get_x() <= a.get_x() && b.get_x() + b.get_width() >= a.get_x() + a.get_width())
 	{
 		if(b.get_y() <= a.get_y() && b.get_y() + b.get_height() >= a.get_y() + a.get_height())
 			hit = true;
 	}
-	//Colisión b con a
+	//When b collides with a
 	if(a.get_x() <= b.get_x() && a.get_x() + a.get_width() >= b.get_x() + b.get_width())
 	{
 		if(a.get_y() <= b.get_y() && a.get_y() + a.get_height() >= b.get_y() + b.get_height())
@@ -232,11 +266,14 @@ public class Scenario extends Canvas implements Runnable{
     }
     @Override
     public void run() {
-        
+        //This is the main thread
         while(isPlaying){
             
             try{
                 repaint();
+                /*
+                 * We check if the a and b buttons are pressed or not.
+                 */
                 if(!xbox1.controller.isButtonPressed(0)){
                     a_is_pressed = false;
                 }
@@ -249,6 +286,7 @@ public class Scenario extends Canvas implements Runnable{
                 if(!xbox2.controller.isButtonPressed(1)){
                     b2_is_pressed = false;
                 }
+                //Sleeps the thread for a while in order to act like a frame timeline.
                 Thread.sleep(1000 / 60);
 
             }catch(Exception e){
@@ -261,6 +299,9 @@ public class Scenario extends Canvas implements Runnable{
           * Set ups the listeners for the control of the Spaceman
           */
         xbox1.addRightAxisListener(new RightAxisListener() {
+            /*
+             * Updates the prompter of the Spaceman's weapon
+             */
             public void rightAxisMoveVertical(float movement) {
                 if (movement > 0) {
                     aim1.setY(aim1.getY() + 20);
@@ -275,6 +316,9 @@ public class Scenario extends Canvas implements Runnable{
             }
 
             public void rightAxisMoveHorizontal(float movement) {
+                 /*
+                * Updates the prompter of the Spaceman's weapon
+                */
                 if (movement > 0) {
                     aim1.setX(aim1.getX() + 20 );
                 } else if(movement < 0){
@@ -294,6 +338,9 @@ public class Scenario extends Canvas implements Runnable{
             }
 
             public void leftAxisMoveHorizontal(float movement) {
+                /*
+                 * Moves the spaceman
+                 */
                 if (movement > 0) {
                     playerOne.move_right();
                 } else if(movement < 0){
@@ -305,6 +352,7 @@ public class Scenario extends Canvas implements Runnable{
         xbox1.addButtonListener(new ButtonListener() {
             @Override
             public void aButtonPressed() {
+                // Shoot a note
                if(!a_is_pressed){
                    int x = aim1.getX() - playerOne.get_x();
                     int y = aim1.getY() - (playerOne.get_y());
@@ -316,6 +364,7 @@ public class Scenario extends Canvas implements Runnable{
             }
 
             public void bButtonPressed() {
+                // The spaceman jumps
                 if(!b_is_pressed){
                    playerOne.jump();
                }
@@ -351,6 +400,9 @@ public class Scenario extends Canvas implements Runnable{
           * Set ups the listeners for the control of the Alien
           */
         xbox2.addRightAxisListener(new RightAxisListener() {
+            /*
+             * Updates the prompter of the Alien's weapon
+             */
             public void rightAxisMoveVertical(float movement) {
                 if (movement > 0) {
                     aim2.setY(aim2.getY() + 20);
@@ -365,6 +417,9 @@ public class Scenario extends Canvas implements Runnable{
             }
 
             public void rightAxisMoveHorizontal(float movement) {
+                /*
+             * Updates the prompter of the Alien's weapon
+             */
                 if (movement > 0) {
                     aim2.setX(aim2.getX() + 20 );
                 } else if(movement < 0){
@@ -384,6 +439,7 @@ public class Scenario extends Canvas implements Runnable{
             }
 
             public void leftAxisMoveHorizontal(float movement) {
+                //Moves the Alien
                 if (movement > 0) {
                     playerTwo.move_right();
                 } else if(movement < 0){
@@ -395,11 +451,12 @@ public class Scenario extends Canvas implements Runnable{
         xbox2.addButtonListener(new ButtonListener() {
             @Override
             public void aButtonPressed() {
+                //Shoot a note
                if(!a2_is_pressed){
                    int x = aim2.getX() - playerTwo.get_x();
                    
                     int y = aim2.getY() - (playerTwo.get_y());
-                    if(x<aim2.getX()) y = -y; 
+                    
                     playerTwo.shoot(y/20,-10);
                     audio.play();
                }
@@ -408,6 +465,7 @@ public class Scenario extends Canvas implements Runnable{
             }
 
             public void bButtonPressed() {
+                // The Alien jumps
                 if(!b2_is_pressed){
                    playerTwo.jump();
                }
@@ -441,6 +499,9 @@ public class Scenario extends Canvas implements Runnable{
         });
     }
      private void setLevel(int level){
+         /*
+          * Set the level of the Game and build the necessary platforms
+          */
          this.platforms = new ArrayList<Platform>();
          if(level == 1){
              this.platforms.add(new Platform((this.width/2)-30,this.height- (342),40,300));

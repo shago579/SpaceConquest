@@ -20,6 +20,9 @@ import javax.swing.ImageIcon;
  * @author Uriel
  */
 public class Weapon implements Runnable{
+    /*
+     * Defines the necessary variables for the Weapon to work
+     */
     private int x;
     public BufferedImage img;
     public BufferedImage img_copy;
