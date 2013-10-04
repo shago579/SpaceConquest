@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
  *
  * @author Uriel
  */
-public class Bullet implements Collisionable,Runnable{
+public class Bullet extends Thread implements Collisionable{
     private int x;
     public Image img;
     private String url = "img/nota.png";

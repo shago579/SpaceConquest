@@ -12,6 +12,9 @@ import javax.swing.JLabel;
 import Xbox.*;
 import java.awt.Canvas;
 import java.awt.image.ImageObserver;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class MainMenu extends Canvas {
@@ -125,9 +128,13 @@ public class MainMenu extends Canvas {
             public void aButtonPressed() {
                 //System.out.println("Click");
                 if(aimOver(aim1, startbtn)){
-                    /////////////////////Crea el juego y cierra el menu
-                    
-                    myFrame.startGame();
+                    try {
+                        /////////////////////Crea el juego y cierra el menu
+
+                        myFrame.startGame();
+                    } catch (IOException ex) {
+                        Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     
                 }
                 if(aimOver(aim1, exitbtn))

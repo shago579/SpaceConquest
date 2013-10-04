@@ -34,8 +34,12 @@ public class Scenario extends Canvas implements Runnable{
     private Spaceman playerOne;
     private Alien playerTwo;
     private Aimer aim1;
+    public int winner = 0;
     private XboxController xbox1;
     private ArrayList<Platform> platforms;
+    private Audio audio;
+    private boolean a_is_pressed = false;
+    private boolean b_is_pressed = false;
     /**
      *
      * @param level
@@ -44,6 +48,7 @@ public class Scenario extends Canvas implements Runnable{
      * @throws IOException
      */
     public Scenario(int level,int width,int height) throws IOException{
+        
         this.width = width;
         this.height = height;
         this.bufferImg = new BufferedImage(570, 380, BufferedImage.TYPE_INT_RGB);
@@ -60,6 +65,7 @@ public class Scenario extends Canvas implements Runnable{
         t1.start();
         playerOne.weapon.update_angle(aim1.getX() - playerOne.get_x() , aim1.getY() - (playerOne.get_y() + 60));
         setLevel(level);
+        audio = new Audio();
         
     }
     
@@ -78,14 +84,28 @@ public class Scenario extends Canvas implements Runnable{
             firstTime = false;
         }
         bufferGraphics.drawImage(this.background, -1, 0,1500,this.height, this);
+        if(winner == 1){
+            bufferGraphics.drawImage(playerOne.winner_image, this.width/2 - 400, this.height/2 -300,this);
+            g.drawImage(this.bufferImg,0,0,this);
+            return;
+        }
+        if(winner == 2){
+            bufferGraphics.drawImage(playerTwo.winner_image, this.width/2, this.height/2,this);
+            g.drawImage(this.bufferImg,0,0,this);
+            return;
+        }
+        
         bufferGraphics.drawImage(aim1.bffimg, aim1.getX(), aim1.getY(), null);
         bufferGraphics.drawImage(this.playerOne.img,this.playerOne.get_x(),this.playerOne.get_y(),this.playerOne.get_width(),this.playerOne.get_height(),this);
+        bufferGraphics.drawImage(this.playerOne.get_image_life(),30,20,this);
+        bufferGraphics.drawImage(this.playerTwo.get_image_life(),1000,20,this);
         bufferGraphics.drawImage(this.playerTwo.img,this.playerTwo.get_x(),this.playerTwo.get_y(),this.playerTwo.get_width(),this.playerTwo.get_height(),this);
         for(Platform p : platforms){
             bufferGraphics.drawImage(p.img,p.get_x(),p.get_y(),p.get_width(),p.get_height(),this);
             checkPlatformCollision(p);
         }
         for(Bullet b : this.playerOne.bullets){
+           
             bufferGraphics.drawImage(b.img,b.get_x(),b.get_y(),this);
             checkCollisions(b);
         }
@@ -94,23 +114,43 @@ public class Scenario extends Canvas implements Runnable{
         g.drawImage(this.bufferImg,0,0,this);
     }
     public void checkCollisions(Bullet b){
+         if(b.isInterrupted()){
+            b.hit();
+        } 
+        if(b.is_alive){
         for(Platform p : this.platforms){
             if(collision(b,p)){
-                b.hit();
+                b.is_alive = false;
             }
         }
         
          if(b.weapon.character.getClass().getName().equals("Game.Spaceman") ){
              
              if(collision(b,playerTwo)){
-                 int current_life_playerTwo = playerTwo.hurt(10,b);
-                 b.hit();
+                 int current_life_playerTwo = playerTwo.hurt(20,b);
+                 if(current_life_playerTwo == 0){
+                     this.winner = 1;
+                 }
+                 b.is_alive = false;
                  
              }
          }
-         else{
-             
+         else if(b.weapon.character.getClass().getName().equals("Game.Alien") ){
+             if(collision(b,playerOne)){
+                 int current_life_playerOne = playerOne.hurt(20,b);
+                 if(current_life_playerOne == 0){
+                     this.winner = 2;
+                 }
+                 b.is_alive = false;
+             }
          }
+        }
+        else if(!b.is_alive && !b.isInterrupted()){
+            b.hit();
+        }
+        else{
+            b.interrupt();
+        }
     }
     public void checkPlatformCollision(Platform p){
         /*
@@ -121,8 +161,6 @@ public class Scenario extends Canvas implements Runnable{
         if(collision(p,playerOne)){
             
             if(playerOne.get_y() < ( p.get_y())){
-                System.out.println(":P");
-                System.out.println(p.get_y() - playerOne.get_height() +5);
                 playerOne.set_y(p.get_y() - playerOne.get_height() +5);
                 playerOne.y_speed *= 0;
             }
@@ -166,6 +204,12 @@ public class Scenario extends Canvas implements Runnable{
             
             try{
                 repaint();
+                if(!xbox1.controller.isButtonPressed(0)){
+                    a_is_pressed = false;
+                }
+                if(!xbox1.controller.isButtonPressed(1)){
+                    b_is_pressed = false;
+                }
                 Thread.sleep(1000 / 60);
 
             }catch(Exception e){
@@ -220,13 +264,22 @@ public class Scenario extends Canvas implements Runnable{
         xbox1.addButtonListener(new ButtonListener() {
             @Override
             public void aButtonPressed() {
-               int x = aim1.getX() - playerOne.get_x();
-               int y = aim1.getY() - (playerOne.get_y());
-               playerOne.shoot(y/20,x/20);
+               if(!a_is_pressed){
+                   int x = aim1.getX() - playerOne.get_x();
+                    int y = aim1.getY() - (playerOne.get_y());
+                    playerOne.shoot(y/20,x/20);
+                    audio.play();
+               }
+               a_is_pressed = true;
+               
             }
 
             public void bButtonPressed() {
-                playerOne.jump();
+                if(!b_is_pressed){
+                   playerOne.jump();
+               }
+                b_is_pressed = true;
+                
             }
 
             public void xButtonPressed() {

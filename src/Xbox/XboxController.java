@@ -16,7 +16,7 @@ public class XboxController implements Runnable{
     private ButtonListener buttons;
     private LeftAxisListener leftAxis;
     
-    private Controller controller;
+    public Controller controller;
     private boolean start;
     
     public XboxController(){

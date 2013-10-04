@@ -6,6 +6,7 @@ package Game;
 
 import java.awt.Image;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -23,6 +24,7 @@ public class Character implements Collisionable,Runnable{
     public int gravity = 2;
     protected int life = 100;
     protected Image img = null;
+    protected Image img_life = null;
     public int y_speed = 0;
     protected ArrayList<Bullet> bullets;
     public void move_right(){
@@ -38,6 +40,21 @@ public class Character implements Collisionable,Runnable{
             this.weapon.setX(this.weapon.get_x()-this.speed);
         }
     }
+    public Image get_image_life(){
+        if(this.life == 100)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life1.png")).getImage();
+        if(this.life == 80)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life2.png")).getImage();
+        if(this.life == 60)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life3.png")).getImage();
+        if(this.life == 40)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life4.png")).getImage();
+        if(this.life == 20)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life5.png")).getImage();
+        if(this.life == 0)
+            this.img_life = new ImageIcon(getClass().getClassLoader().getResource("img/life6.png")).getImage();
+        return this.img_life;
+    }
     public int hurt(int hit, Bullet b){
         this.life -= hit;
         return this.life;
@@ -52,7 +69,7 @@ public class Character implements Collisionable,Runnable{
         t.start();
     }
     public void jump(){
-        this.y_speed = 20;
+        this.y_speed = 50;
     }
     @Override
     public int get_x() {

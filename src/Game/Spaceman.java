@@ -16,8 +16,9 @@ import javax.swing.ImageIcon;
 public class Spaceman extends Character{
     public static int height = 90;
     public static int width = 55;
-    
+    public Image winner_image;
     public Spaceman(int x, int y,int limite_x,int limite_y) throws IOException{
+        this.winner_image = new ImageIcon(getClass().getClassLoader().getResource("img/player1win.png")).getImage();
         this.x = x;
         this.y = y;
         this.limite_y = y;
