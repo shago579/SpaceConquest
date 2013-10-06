@@ -25,7 +25,9 @@ public class MenuButton {
     private int y;
 
     public MenuButton(int x, int y, String type) {
-
+        /*
+     * This object contains the buttons of the main menu
+     */
         this.x = x;
         this.y = y;
         String direction = "../img/" + type + "ButtonNoPush.png";
@@ -36,8 +38,8 @@ public class MenuButton {
             noSelected = ImageIO.read(url);
             this.bffimg = noSelected;
             
-            url = this.getClass().getResource(direction2);
-            selected = ImageIO.read(url);
+            
+            
             
             url = this.getClass().getResource(direction3);
             nothing = ImageIO.read(url);
@@ -73,7 +75,5 @@ public class MenuButton {
     public void nothingOver(){
         this.bffimg = this.noSelected;
     }
-    public void select(){
-        this.bffimg = this.selected;
-    }
+    
 }

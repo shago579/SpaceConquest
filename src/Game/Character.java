@@ -26,7 +26,7 @@ public class Character implements Collisionable,Runnable{
     public int gravity = 2;
     protected int life = 100;
     protected Image img = null;
-    private int speed = 5;
+    private int speed = 15;
     protected Image img_life = null;
     public int y_speed = 0;
     protected ArrayList<Bullet> bullets;

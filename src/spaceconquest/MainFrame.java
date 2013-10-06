@@ -5,15 +5,19 @@ import Game.Scenario;
 import java.io.IOException;
 
 public class MainFrame extends JFrame {
-
+    /*
+     * Interface for initialize the game
+     */
     private MainMenu menu;
     private Scenario scene1;
-    //private Scenario level1;
+    private Credits credit;
+    
 
     public MainFrame() {
-
+        /*
+     *  Creates a new Menu
+        */
         menu = new MainMenu(this);
-        //scene1 = new Scenario();
 
         setResizable(false);
         setUndecorated(true);
@@ -25,16 +29,40 @@ public class MainFrame extends JFrame {
         
         setVisible(true);
     }
-
-    public void startGame() throws IOException {
+    public void backToMenu(Credits c){
+        /*
+     * Returns to the menu coming from the credits
+     */
+        
+        this.remove(c);
+        menu = new MainMenu(this);
+        this.add(menu);
+        setVisible(true);
+        repaint();
+    }
+    public void startGame(int level) throws IOException {
+        /*
+     * Creates a new Scenario object that starts the game when running the thread
+     */
         this.menu.xbox1.finish();
-        scene1 = new Scenario(2,this.getWidth(),this.getHeight());
+        scene1 = new Scenario(level,this.getWidth(),this.getHeight());
         scene1.setBounds(0,0, this.getWidth(),this.getHeight());
         Thread tgame = new Thread(scene1);
         add(scene1);
-        menu.isOver = false;
         remove(menu);        
         tgame.start();
         repaint();
     }
+     public void showCredits(){
+         /*
+     * Displays the credits of the game
+     */
+        credit = new Credits(this);
+        credit.setBounds(0,0, this.getWidth(),this.getHeight());
+        add(credit);
+        repaint();
+        remove(menu);        
+        repaint();
+    }
+
 }

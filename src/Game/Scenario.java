@@ -3,6 +3,7 @@ package Game;
 import Xbox.ButtonListener;
 import Xbox.LeftAxisListener;
 import Xbox.RightAxisListener;
+import Xbox.TriggersListener;
 import Xbox.XboxController;
 import java.awt.Canvas;
 import java.awt.Color;
@@ -111,6 +112,7 @@ public class Scenario extends Canvas implements Runnable{
         if(winner == 1){
             bufferGraphics.drawImage(playerOne.winner_image, this.width/2 - 400, this.height/2 -300,this);
             g.drawImage(this.bufferImg,0,0,this);
+            
             return;
         }
         if(winner == 2){
@@ -298,15 +300,38 @@ public class Scenario extends Canvas implements Runnable{
          /*
           * Set ups the listeners for the control of the Spaceman
           */
-        xbox1.addRightAxisListener(new RightAxisListener() {
+         xbox1.addTriggersListener(new TriggersListener(){
+
+             @Override
+             public void rightTriggerPressed(boolean press) {
+                 if(!a_is_pressed){
+                   int x = aim1.getX() - playerOne.get_x();
+                    int y = aim1.getY() - (playerOne.get_y());
+                    playerOne.shoot(y/20,10);
+                    audio.play();
+               }
+               a_is_pressed = true;
+                // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+             }
+
+             @Override
+             public void leftTriggerPressed(boolean press) {
+                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+             }
+             
+         });
+         xbox1.addRightAxisListener(new RightAxisListener() {
             /*
              * Updates the prompter of the Spaceman's weapon
              */
+            
             public void rightAxisMoveVertical(float movement) {
                 if (movement > 0) {
-                    aim1.setY(aim1.getY() + 20);
+                    if(aim1.getY()< 720)
+                        aim1.setY(aim1.getY() + 30);
                 } else if(movement < 0){
-                    aim1.setY(aim1.getY() - 20);
+                    if(aim1.getY()>0)
+                        aim1.setY(aim1.getY() - 30);
                 }
                 try {
                     playerOne.weapon.update_angle(aim1.getX() - playerOne.get_x() , aim1.getY() - (playerOne.get_y() + 60));
@@ -314,15 +339,17 @@ public class Scenario extends Canvas implements Runnable{
                     Logger.getLogger(Scenario.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
+            
             public void rightAxisMoveHorizontal(float movement) {
                  /*
                 * Updates the prompter of the Spaceman's weapon
                 */
                 if (movement > 0) {
-                    aim1.setX(aim1.getX() + 20 );
+                    if(aim1.getX() < 1130)
+                        aim1.setX(aim1.getX() + 30 );
                 } else if(movement < 0){
-                    aim1.setX(aim1.getX() - 20);
+                    if(aim1.getX() > 0 )
+                        aim1.setX(aim1.getX() - 30);
                 }
                 try {
                     playerOne.weapon.update_angle(aim1.getX() - playerOne.get_x() , aim1.getY() - (playerOne.get_y() + 60));
@@ -399,15 +426,38 @@ public class Scenario extends Canvas implements Runnable{
         /*
           * Set ups the listeners for the control of the Alien
           */
+        xbox2.addTriggersListener(new TriggersListener() {
+
+             @Override
+             public void rightTriggerPressed(boolean press) {
+                 if(!a2_is_pressed){
+                   int x = aim2.getX() - playerTwo.get_x();
+                   
+                    int y = aim2.getY() - (playerTwo.get_y());
+                    
+                    playerTwo.shoot(y/20,-10);
+                    audio.play();
+               }
+               a2_is_pressed = true;
+                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+             }
+
+             @Override
+             public void leftTriggerPressed(boolean press) {
+                 //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+             }
+         });
         xbox2.addRightAxisListener(new RightAxisListener() {
             /*
              * Updates the prompter of the Alien's weapon
              */
             public void rightAxisMoveVertical(float movement) {
                 if (movement > 0) {
-                    aim2.setY(aim2.getY() + 20);
+                    if(aim2.getY()< 720)
+                        aim2.setY(aim2.getY() + 30);
                 } else if(movement < 0){
-                    aim2.setY(aim2.getY() - 20);
+                    if(aim2.getY()>0)
+                        aim2.setY(aim2.getY() - 30);
                 }
                 try {
                     playerTwo.weapon.update_angle(aim2.getX() - playerTwo.get_x() , aim2.getY() - (playerTwo.get_y() + 60));
@@ -421,9 +471,11 @@ public class Scenario extends Canvas implements Runnable{
              * Updates the prompter of the Alien's weapon
              */
                 if (movement > 0) {
-                    aim2.setX(aim2.getX() + 20 );
+                    if(aim2.getX() < 1130)
+                        aim2.setX(aim2.getX() + 30 );
                 } else if(movement < 0){
-                    aim2.setX(aim2.getX() - 20);
+                    if(aim2.getX() > 0 )
+                        aim2.setX(aim2.getX() - 30);
                 }
                 try {
                     playerTwo.weapon.update_angle(aim2.getX() - playerTwo.get_x() , aim2.getY() - (playerTwo.get_y() + 60));
@@ -504,15 +556,16 @@ public class Scenario extends Canvas implements Runnable{
           */
          this.platforms = new ArrayList<Platform>();
          if(level == 1){
-             this.platforms.add(new Platform((this.width/2)-30,this.height- (342),40,300));
+             
          }
          if(level == 2){
+             this.platforms.add(new Platform((this.width/2)-30,this.height- (342),40,300));
+             
+         }
+         if(level == 3){
              this.platforms.add(new Platform((this.width/2)-30,this.height- (325),40,300));
              this.platforms.add(new Platform((this.width/2)+250,this.height- (425),40,400));
              this.platforms.add(new Platform((this.width/2)-250,this.height- (425),40,400));
-         }
-         if(level == 1){
-             this.platforms.add(new Platform((this.width/2)-30,this.height- (332),40,300));
          }
      }
     

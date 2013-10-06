@@ -26,7 +26,7 @@ public class Alien extends Character{
         this.limite_y = y;
         this.y = y;
         this.img = new ImageIcon(getClass().getClassLoader().getResource("img/Player2Body.png")).getImage();
-        this.winner_image = new ImageIcon(getClass().getClassLoader().getResource("img/player1win.png")).getImage();
+        this.winner_image = new ImageIcon(getClass().getClassLoader().getResource("img/player2win.png")).getImage();
         weapon = new Weapon(this.get_x() - 70,this.get_y() - 60,"Player2Arm_test.png",this);
         bullets = new ArrayList<Bullet>(); 
     

@@ -9,6 +9,9 @@ package Game;
  * @author Uriel
  */
 public interface Collisionable {
+    /*
+     * Interface for objects that could collide
+     */
     int get_x();
     int get_y();
     int get_width();

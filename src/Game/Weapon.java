@@ -19,7 +19,7 @@ import javax.swing.ImageIcon;
  *
  * @author Uriel
  */
-public class Weapon implements Runnable{
+public class Weapon {
     /*
      * Defines the necessary variables for the Weapon to work
      */
@@ -36,6 +36,7 @@ public class Weapon implements Runnable{
     public Character character;
     boolean is_alive = true;
     public Weapon(int x, int y, String url, Character ch) throws IOException {
+        //Creates a new weapon.
         this.url = url;
         this.character = ch;
         this.img = new BufferedImage(570, 380, BufferedImage.TRANSLUCENT);
@@ -45,43 +46,40 @@ public class Weapon implements Runnable{
         this.x = x;
         
     }
-    @Override
-    public void run() {
-        while(is_alive){
-            try{
-                Thread.sleep(1000 / 60);             
-            }
-            catch (Exception e){
-                System.out.println(e);
-            }
-        }
-    }
+
     public int get_x() {
+        //Returns the x value of the weapon
         return x;
     }
 
     public int get_y() {
+        //Returns the y value of the weapon
         return y;
     }
     public int get_width() {
+        //Returns the width value of the weapon
         return width;
     }
 
     public int get_height() {
+        //Returns the height value of the weapon
         return height;
     }
     public Image get_img(){
+        //Returns the image of the weapon
         return img;
     }
     public void setX(int x) {
+        //Changes the x value of the weapon
         this.x = x;
     }
 
     public void setY(int y) {
+        //Returns the y value of the weapon
         this.y = y;
     }
     public void update_angle(double width, double height ) throws IOException{
-        
+        //Turns the weapon depending of the position of the control.
         this.angle = Math.toDegrees(Math.atan(height/width));
         AffineTransform trans = new AffineTransform();
         if(this.character.getClass().getName().equals("Game.Alien")){

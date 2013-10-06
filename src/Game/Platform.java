@@ -12,10 +12,14 @@ import javax.swing.ImageIcon;
  * @author Uriel
  */
 public class Platform implements Collisionable{
+    /*
+     * This object represents the platforms of the game
+     */
     private int x,y,width,height;
     private String url = "img/level.png";
     public Image img;
     public Platform(int x,int y, int width, int height){
+        //Creates a new Platform
         this.x = x;
         this.y = y;
         this.width = width;

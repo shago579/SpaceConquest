@@ -28,6 +28,7 @@ public class MainMenu extends Canvas {
     private Graphics bufferGraphics;
     private BufferedImage bufferImg;
     private Aimer aim1;
+    private MenuButton creditbtn;
 
     public boolean isOver = true;
     
@@ -44,7 +45,7 @@ public class MainMenu extends Canvas {
             System.exit(0);
             //myFrame.dispose();
         }
-        xbox1 = new XboxController(1);
+        xbox1 = new XboxController(0);
         initControls();
         Thread t1 = new Thread(xbox1);
         t1.start();
@@ -52,7 +53,7 @@ public class MainMenu extends Canvas {
         startbtn = new MenuButton(550, 300, "Start");
         exitbtn = new MenuButton(550, 450, "Exit");
         title = new JLabel("Titulo del Juego");
-
+        creditbtn = new MenuButton(530, 600,"Credits");
         title.setSize(200, 150);
         title.setPreferredSize(new Dimension(200, 250));
         title.setMaximumSize(new Dimension(200, 250));
@@ -88,6 +89,7 @@ public class MainMenu extends Canvas {
         bufferGraphics.drawImage(startbtn.getBffImage(), startbtn.getX(), startbtn.getY(), title);
         bufferGraphics.drawImage(exitbtn.getBffImage(), exitbtn.getX(), exitbtn.getY(), title);
         bufferGraphics.drawImage(aim1.bffimg, aim1.getX(), aim1.getY(), null); // see javadoc for more info on the parameters 
+        bufferGraphics.drawImage(creditbtn.getBffImage(), creditbtn.getX(), creditbtn.getY(), title);
         bufferGraphics.drawImage(this.aim1.bffimg, this.aim1.x, this.aim1.y, this);
         g.drawImage(this.bufferImg,0,0,this);
         
@@ -98,21 +100,26 @@ public class MainMenu extends Canvas {
         xbox1.addRightAxisListener(new RightAxisListener() {
             public void rightAxisMoveVertical(float movement) {
                 if (movement > 0) {
-                    aim1.setY(aim1.getY() + 20);
+                    if(aim1.getY() < 720)
+                        aim1.setY(aim1.getY() + 20);
                 } else if(movement < 0){
-                    aim1.setY(aim1.getY() - 20);
+                    if(aim1.getY() > 0)
+                        aim1.setY(aim1.getY() - 20);
                 }
                 repaint();
             }
 
             public void rightAxisMoveHorizontal(float movement) {
                 if (movement > 0) {
-                    aim1.setX(aim1.getX() + 20 );
+                    if(aim1.getX() < 1368)
+                        aim1.setX(aim1.getX() + 20 );
                 } else if(movement < 0){
-                    aim1.setX(aim1.getX() - 20);
+                    if(aim1.getX() > 0 )
+                        aim1.setX(aim1.getX() - 20);
                 }
                 repaint();
             }
+
         });
 
         xbox1.addLeftAxisListener(new LeftAxisListener() {
@@ -129,9 +136,9 @@ public class MainMenu extends Canvas {
                 //System.out.println("Click");
                 if(aimOver(aim1, startbtn)){
                     try {
-                        /////////////////////Creates the game and closes the menu
+                        //Creates the game and closes the menu
 
-                        myFrame.startGame();
+                        myFrame.startGame(1);
                     } catch (IOException ex) {
                         Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -139,13 +146,35 @@ public class MainMenu extends Canvas {
                 }
                 if(aimOver(aim1, exitbtn))
                     System.exit(0);
-                    //myFrame.dispose();
+                if(aimOver(aim1, creditbtn)){
+                    myFrame.showCredits();
+                }
             }
 
             public void bButtonPressed() {
+                if(aimOver(aim1, startbtn)){
+                    try {
+                        //Creates the game in level 2 and closes the menu
+
+                        myFrame.startGame(2);
+                    } catch (IOException ex) {
+                        Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
             }
 
             public void xButtonPressed() {
+                if(aimOver(aim1, startbtn)){
+                    try {
+                        //Creates the game in level 3 and closes the menu
+
+                        myFrame.startGame(3);
+                    } catch (IOException ex) {
+                        Logger.getLogger(MainMenu.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
+                }
             }
 
             public void yButtonPressed() {
